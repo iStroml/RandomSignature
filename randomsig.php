@@ -1,10 +1,10 @@
 <?php
 $folder = '.';
     $extList = array();
-    $extList['gif'] = 'image/gif';
-    $extList['jpg'] = 'image/jpeg';
-    $extList['jpeg'] = 'image/jpeg';
     $extList['png'] = 'image/png';
+    $extList['jpg'] = 'image/jpeg';
+    $extList['gif'] = 'image/gif';
+    $extList['jpeg'] = 'image/jpeg';
 
 $img = null;
 
@@ -13,12 +13,12 @@ if (substr($folder,-1) != '/') {
 }
 
 if (isset($_GET['img'])) {
-    $imageInfo = pathinfo($_GET['img']);
+    $pathinfo = pathinfo($_GET['img']);
     if (
-        isset( $extList[ strtolower( $imageInfo['extension'] ) ] ) &&
-        file_exists( $folder.$imageInfo['basename'] )
+        isset( $extList[ strtolower( $pathinfo['extension'] ) ] ) &&
+        file_exists( $folder.$pathinfo['basename'] )
     ) {
-        $img = $folder.$imageInfo['basename'];
+        $img = $folder.$pathinfo['basename'];
     }
 } else {
     $fileList = array();
@@ -40,21 +40,29 @@ if (isset($_GET['img'])) {
 }
 
 if ($img!=null) {
-    $imageInfo = pathinfo($img);
-    $contentType = 'Content-type: '.$extList[ $imageInfo['extension'] ];
+    $pathinfo = pathinfo($img);
+    $contentType = 'Content-type: '.$extList[ $pathinfo['extension'] ];
     header ($contentType);
     readfile($img);
 } else {
     if ( function_exists('imagecreate') ) {
         header ("Content-type: image/png");
         $im = @imagecreate (100, 100)
-            or die ("Cannot initialize new GD image stream");
+            or die ("Cannot initialize new image stream");
         $background_color = imagecolorallocate ($im, 255, 255, 255);
         $text_color = imagecolorallocate ($im, 0,0,0);
-        imagestring ($im, 2, 5, 5,  "IMAGE ERROR", $text_color);
+        imagestring ($im, 2, 5, 5,  "ERROR", $text_color);
         imagepng ($im);
         imagedestroy($im);
     }
 }
 
 ?>
+
+
+/*
+   The script displays a random image with the extension of $extList in the specified folder configued in $folder
+   $folder = the configured path of the images
+   $extList = Array containting all img extensions
+
+*/
